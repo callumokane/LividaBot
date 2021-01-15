@@ -1,0 +1,15 @@
+{
+	"name": "@livida/shared",
+	"version": "1.0.0",
+	"main": "src/index.ts",
+	"license": "MIT",
+	"dependencies": {
+		"winston": "^3.3.3"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^4.13.0",
+		"@typescript-eslint/parser": "^4.13.0",
+		"eslint": "^7.17.0",
+		"typescript": "^4.1.3"
+	}
+}

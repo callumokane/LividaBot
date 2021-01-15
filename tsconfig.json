@@ -1,10 +1,12 @@
 {
 	"compilerOptions": {
-		"target": "es2018",
-		"module": "commonjs",
+		"target": "ESNext",
+		"module": "CommonJS",
+
 		"outDir": "dist",
-		"sourceMap": true,
-		"esModuleInterop": true
-	},
-	"exclude": ["node_modules"]
+
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true
+	}
 }
