@@ -16,14 +16,6 @@ export default class Functions extends Client {
 		setInterval(() => regenCanvas(client).catch(null), 5000);
 	}
 
-	getCommand(cmd: string) {
-		const client = require(process.cwd() + "/dist/index").Bot;
-		const cm =
-			client.aliases.get(cmd.toLowerCase()) ||
-			client.commands.get(cmd.toLowerCase());
-		return cm || false;
-	}
-
 	requestSong(song: string, user: string) {
 		const body = JSON.stringify({
 			name: user,

@@ -15,18 +15,25 @@ interface CommandOptions {
 /**
  * Represents the base command class.
  */
-export class Command {
+export abstract class Command {
 	constructor(
 		readonly client: LividaClient,
 		readonly options: CommandOptions
 	) {}
 
 	/**
+	 * Return a reference to the client's logger.
+	 */
+	get logger() {
+		return this.client.logger;
+	}
+
+	/**
 	 * Execute this command.
 	 * @param message
 	 * @param args
 	 */
-	async run(message: Message, args: string[]) {}
+	abstract run(message: Message, args: string[], prefix: string): any;
 }
 
 /**

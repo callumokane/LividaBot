@@ -1,27 +1,27 @@
-import API from "../../../api/src";
-import Caching from "../../../src/util/client/Caching";
+import { LividaClient } from "../LividaClient";
+import { EventListener } from "../structures/EventListener";
 
-module.exports = {
-	name: "ready",
-	type: "client",
-	run: (client) => {
-		client.success(`Connected as ${client.user.tag}`);
+/**
+ * Handles the ready event.
+ */
+class ReadyEvent extends EventListener<"ready"> {
+	constructor(readonly client: LividaClient) {
+		super(client, { name: "ready" });
+	}
 
-		let api = new API(),
-			cache = new Caching();
+	emit() {
+		this.logger.info(`Connected as ${this.client.user.tag}`);
 
-		client.cache = cache;
+		// setInterval(() => cache.updateCache(client), 15000);
+		// setInterval(() => {
+		// 	if (!client.maxPing || client.maxPing < client.ws.ping)
+		// 		client.maxPing = client.ws.ping;
+		// 	if (!client.minPing || client.minPing > client.ws.ping)
+		// 		client.minPing = client.ws.ping;
+		// }, 2000);
 
-		setInterval(() => cache.updateCache(client), 15000);
-		setInterval(() => {
-			if (!client.maxPing || client.maxPing < client.ws.ping)
-				client.maxPing = client.ws.ping;
-			if (!client.minPing || client.minPing > client.ws.ping)
-				client.minPing = client.ws.ping;
-		}, 2000);
-
-		api.loadAPI(client);
-		cache.loadCache(client);
-		cache.updateCache(client);
-	},
-};
+		// api.loadAPI(client);
+		// cache.loadCache(client);
+		// cache.updateCache(client);
+	}
+}

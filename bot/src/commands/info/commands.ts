@@ -78,7 +78,7 @@ export class HelpCommand extends Command {
 		const modules = [...new Set(this.client.commandCategories)],
 			mAliases = [].concat.apply(
 				[],
-				this.client.Constants.commandCategories.map((x) => x.aliases)
+				this.client.categories.map((x) => x.aliases)
 			);
 		if (this.client.devs.includes(message.author.id))
 			modules.push("Developer");
@@ -239,13 +239,14 @@ export class HelpCommand extends Command {
 			categoryEmbed(client, message, args, commands, cat);
 		} else {
 			var command = this.client.getCommand(args[0]);
-			if (!command)
+			if (!command) {
 				return message.channel.send({
 					embed: {
 						description:
 							"The specified command or category was not found!",
 					},
 				});
+			}
 			commandEmbed(client, message, args, command, 0, prefix);
 		}
 	}
