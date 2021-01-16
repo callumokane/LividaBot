@@ -24,10 +24,6 @@ export default class Functions extends Client {
 		return cm || false;
 	}
 
-	upperOne(input: string) {
-		return input.toLowerCase().charAt(0).toUpperCase() + input.substring(1);
-	}
-
 	requestSong(song: string, user: string) {
 		const body = JSON.stringify({
 			name: user,

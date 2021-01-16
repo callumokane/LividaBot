@@ -1,22 +1,28 @@
+import { Message } from "discord.js";
 import util from "util";
 
-module.exports = {
-	config: {
-		name: "evaluate",
-		aliases: ["eval", "ev"],
-		category: "Developer",
-		usage: "",
-		description: "Test JS expressions",
-		hidden: false,
-		permissions: {
-			developer: true,
-		},
-	},
-	run: (client, message, args) => {
-		const bot = client,
-			token = client.token;
+import { LividaClient } from "../../LividaClient";
+import { Command } from "../../structures/Command";
+
+export class EvaluateCommand extends Command {
+	constructor(client: LividaClient) {
+		super(client, {
+			name: "evaluate",
+			aliases: ["eval", "ev"],
+			category: "Developer",
+			usage: "",
+			description: "Test JS expressions",
+			hidden: false,
+			permissions: {
+				developer: true,
+			},
+		});
+	}
+
+	async run(message: Message, args: string[]) {
 		let codein = args.join(" ");
 		if (!args[0]) codein = "'No input given'";
+
 		message.channel
 			.send(`**Input**\n\`\`\`js\n${codein}\`\`\``)
 			.then(async (msg) => {
@@ -61,13 +67,11 @@ module.exports = {
 					msg.edit(
 						`${msg.content}\n**Output** (${type})\n\`\`\`js\n${code}\`\`\``
 					);
-					client.token = token;
 				} catch (e) {
 					msg.edit(
 						`${msg.content}\n**Output** (Error)\n\`\`\`${e}\`\`\``
 					);
-					client.token = token;
 				}
 			});
-	},
-};
+	}
+}

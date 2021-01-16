@@ -1,5 +1,5 @@
 import { LividaApi } from "../LividaApi";
-import { info } from "./info";
+import { info } from "./servers";
 import { stats } from "./stats";
 
 /**
@@ -9,7 +9,7 @@ import { stats } from "./stats";
 export const registerRoutes = (server: LividaApi) => {
 	server.app
 		.use("/stats", stats)
-		.use("/info", info)
+		.use("/servers", info)
 		.get("/serverinfo", (req, res) => serverinfo(client, req, res))
 		.get("/serverinfo/:serverID", (req, res) =>
 			serverinfo(client, req, res)

@@ -1,10 +1,10 @@
-import { Client, ClientOptions, Collection } from "discord.js";
+import { Client, ClientOptions, ClientUser, Collection, Message } from "discord.js";
 import { connect } from "mongoose";
 
 import { createLogger } from "@livida/shared";
 
 import { CATEGORIES } from "./constants";
-import Handlers from "./util/client/Handlers";
+import { Command, ExtendedCommandConstructor } from "./structures/Command";
 
 /**
  * Options the client can take.
@@ -34,14 +34,46 @@ export class LividaClient extends Client {
 	commandCategories = CATEGORIES.filter((x) => !x.hidden).map((x) => x.name);
 
 	events = new Collection<any, any>();
-	commands = new Collection<any, any>();
+	commands = new Collection<string, Command>();
 
 	// aliases are part of commands - shouldn't be here.
 	aliases = new Collection<any, any>();
 
+	// client user will always exist when commands are executed.
+	user!: ClientUser;
+
 	constructor(options?: Partial<LividaClientOptions>) {
 		super(options);
 		this.options = { ...this.options, ...options };
+	}
+
+	/**
+	 * Add commands to this client.
+	 * @param commands
+	 */
+	addCommand(...commands: ExtendedCommandConstructor[]) {
+		commands.forEach((v) => {
+			const command = new v(this);
+			this.commands.set(command.options.name, command);
+		});
+		return this;
+	}
+
+	private _categories: string[] | undefined;
+
+	/**
+	 * Return the categories of available commands.
+	 */
+	get categories() {
+		if (this._categories) {
+			return this._categories;
+		}
+
+		const categories = new Set<string>();
+		this.commands.forEach((v) => categories.add(v.options.category));
+		this._categories = Array.from(categories);
+
+		return this._categories;
 	}
 
 	/**
@@ -85,7 +117,7 @@ export class LividaClient extends Client {
 	 * @param msg
 	 * @param query
 	 */
-	getChannel(msg: Message, query) {
+	getChannel(msg: Message, query: string) {
 		if (query.length > 3)
 			return (
 				msg.mentions.channels.first() ||

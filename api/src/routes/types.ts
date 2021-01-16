@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
 
-import { LividiaAPI } from "../LividiaAPI";
+import { LividaApi } from "../LividaApi";
 
 /**
  * A generic request handler factory type.
  */
-export type RHF = (server: LividiaAPI) => RequestHandler;
+export type RHF = (server: LividaApi) => RequestHandler;
