@@ -7,20 +7,10 @@ import { stats } from "./stats";
  * @param server R
  */
 export const registerRoutes = (server: LividaApi) => {
-	server.app
-		.use("/stats", stats)
-		.use("/servers", info)
-		.get("/serverinfo", (req, res) => serverinfo(client, req, res))
-		.get("/serverinfo/:serverID", (req, res) =>
-			serverinfo(client, req, res)
-		);
+	server.app.use("/stats", stats).use("/servers", info);
 
 	// default 404 handler for all request methods
 	server.app.use("*", (req, res) =>
 		res.status(404).json({ code: 404, msg: "endpoint not found" })
-	);
-
-	server.app.listen(client.options._apiPort, () =>
-		client.success(`API started on port ${client.options._apiPort}`)
 	);
 };
