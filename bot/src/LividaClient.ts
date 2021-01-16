@@ -1,4 +1,4 @@
-import { Client, ClientOptions, ClientUser, Collection, Message } from "discord.js";
+import { Channel, Client, ClientOptions, ClientUser, Collection, Message } from "discord.js";
 import { connect } from "mongoose";
 
 import { createLogger } from "@livida/shared";
@@ -69,10 +69,9 @@ export class LividaClient extends Client {
 	 * @param msg
 	 * @param query
 	 */
-	getChannel(msg: Message, query: string) {
+	getChannel<T extends Channel>(msg: Message, query: string): T {
 		if (query.length > 3)
-			return (
-				msg.mentions.channels.first() ||
+			return (msg.mentions.channels.first() ||
 				this.channels.cache.get(query) ||
 				this.channels.cache
 					.filter(
@@ -80,12 +79,10 @@ export class LividaClient extends Client {
 							(ch as any).name.includes(query.toLowerCase()) &&
 							ch.type === "text"
 					)
-					.first()
-			);
+					.first()) as T;
 		else
-			return (
-				msg.mentions.channels.first() || this.channels.cache.get(query)
-			);
+			return (msg.mentions.channels.first() ||
+				this.channels.cache.get(query)) as T;
 	}
 
 	/**
