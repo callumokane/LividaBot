@@ -1,44 +1,45 @@
-import chalk from "chalk";
 import { Client, ClientOptions, Collection } from "discord.js";
-import env from "dotenv";
-import minimist, { ParsedArgs } from "minimist";
-import { Db } from "mongodb";
 import { connect } from "mongoose";
 
 import { createLogger } from "@livida/shared";
 
-import { CATEGORIES, EMOJI } from "./constants";
+import { CATEGORIES } from "./constants";
 import Handlers from "./util/client/Handlers";
-import Functions from "./util/functions";
 
-env.config();
-
-interface LividiaClientOptions extends ClientOptions {
+/**
+ * Options the client can take.
+ */
+interface LividaClientOptions extends ClientOptions {
 	debug: boolean;
+	token: string;
 	databaseUri: string;
 }
 
-const DEFAULT_CLIENT_OPTIONS: LividiaClientOptions = {
+/**
+ * Contains the default options for the bot client.
+ */
+const DEFAULT_CLIENT_OPTIONS: LividaClientOptions = {
 	debug: false,
 	databaseUri: "mongodb://localhost:27017/livida",
+	token: "",
 };
 
-export class LividiaClient extends Client {
+/**
+ * Bot client - extends from Discord.JS client to allow access to inherited methods.
+ */
+export class LividaClient extends Client {
 	readonly logger = createLogger();
 	readonly options = DEFAULT_CLIENT_OPTIONS;
 
 	commandCategories = CATEGORIES.filter((x) => !x.hidden).map((x) => x.name);
 
-	events: Collection<any, any>;
-	commands: Collection<any, any>;
-	aliases: Collection<any, any>;
+	events = new Collection<any, any>();
+	commands = new Collection<any, any>();
 
-	/**
-	 * Developer IDs.
-	 */
-	private devs = ["506899274748133376", "264617372227338241"];
+	// aliases are part of commands - shouldn't be here.
+	aliases = new Collection<any, any>();
 
-	constructor(options: Partial<LividiaClientOptions>) {
+	constructor(options?: Partial<LividaClientOptions>) {
 		super(options);
 		this.options = { ...this.options, ...options };
 	}
@@ -54,24 +55,29 @@ export class LividiaClient extends Client {
 		});
 	}
 
-	// Make login private - shouldn't be used.
-	private login = super.login;
-
-	async start() {
+	/**
+	 * Connect to Discord and initialize the database.
+	 * @param token The access token
+	 */
+	async login(token = this.options.token) {
 		await this.setupDatabase();
 
-		this.Handlers = new Handlers(this);
-		this.Handlers.loadEvents(this);
-		this.Handlers.loadCommands(this);
+		// this is bad. don't use fs to load shit.
+		// this.Handlers = new Handlers(this);
+		// this.Handlers.loadEvents(this);
+		// this.Handlers.loadCommands(this);
 
 		this.logger.info(`Loaded commands (${this.commands.size})`);
 		this.logger.info(`Loaded events (${this.events.size})`);
 
-		await this.login(
-			this.ags.dev ? process.env.TOKENDEV : process.env.TOKEN
-		)
-			.then((_) => (this.db = require("../../index").db))
-			.catch(this.error);
+		// use try-catch blocks
+		try {
+			await super.login(token);
+		} catch (err) {
+			this.logger.error(err);
+		}
+
+		return token;
 	}
 
 	/**

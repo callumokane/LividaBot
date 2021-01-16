@@ -1,6 +1,6 @@
 import axios from "axios";
+import { Client, MessageEmbed } from "discord.js";
 
-import { Client, MessageEmbed } from "../client/node_modules/discord.js.js.js";
 import regenCanvas from "./regenCanvas";
 
 export default class Functions extends Client {
@@ -16,26 +16,7 @@ export default class Functions extends Client {
 		setInterval(() => regenCanvas(client).catch(null), 5000);
 	}
 
-	getChannel(msg, query) {
-		if (query.length > 3)
-			return (
-				msg.mentions.channels.first() ||
-				this.channels.cache.get(query) ||
-				this.channels.cache
-					.filter(
-						(ch) =>
-							(ch as any).name.includes(query.toLowerCase()) &&
-							ch.type === "text"
-					)
-					.first()
-			);
-		else
-			return (
-				msg.mentions.channels.first() || this.channels.cache.get(query)
-			);
-	}
-
-	getCommand(cmd) {
+	getCommand(cmd: string) {
 		const client = require(process.cwd() + "/dist/index").Bot;
 		const cm =
 			client.aliases.get(cmd.toLowerCase()) ||
@@ -55,7 +36,7 @@ export default class Functions extends Client {
 			requestOrigin: "Discord",
 		});
 
-		(axios as any)("https://livida.net/api/radio/request", {
+		axios("https://livida.net/api/radio/request", {
 			method: "POST",
 			data: body,
 			headers: { "Content-Type": "application/json" },

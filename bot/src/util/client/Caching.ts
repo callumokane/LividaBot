@@ -1,9 +1,11 @@
-export class CacheManager {
-	constructor(readonly client: LividiaClient) {}
+import { LividaClient } from "../../LividaClient";
 
-	updateCache(client) {
-		client.users.cache.forEach((user) =>
-			client.db
+export class CacheManager {
+	constructor(readonly client: LividaClient) {}
+
+	updateCache() {
+		this.client.users.cache.forEach((user) =>
+			this.client.db
 				.collection("cachedUsers")
 				.findOneAndUpdate(
 					{ id: user.id },
@@ -13,8 +15,8 @@ export class CacheManager {
 		);
 	}
 
-	loadCache(client) {
-		client.db
+	loadCache() {
+		this.client.db
 			.collection("cachedUsers")
 			.find({ cached: true })
 			.toArray()
